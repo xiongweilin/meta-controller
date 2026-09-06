@@ -71,6 +71,8 @@ class ExperienceLifecycle:
         evidence_ref: str,
         negative: bool = False,
     ) -> ExperienceRecord:
+        if not evidence_ref.strip():
+            raise ValueError("validation requires a non-empty evidence_ref")
         if negative:
             return ExperienceRecord(
                 summary=record.summary,
@@ -84,6 +86,8 @@ class ExperienceLifecycle:
                 validation_count=record.validation_count,
                 stage=record.stage,
             )
+        if evidence_ref in record.evidence_refs:
+            raise ValueError("positive validation requires a new evidence_ref")
         count = record.validation_count + 1
         return ExperienceRecord(
             summary=record.summary,
@@ -135,6 +139,12 @@ class PolicyEvaluation:
     regressions: tuple[str, ...] = ()
     improvements: tuple[str, ...] = ()
     evidence_refs: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        if not self.rule_ref.strip():
+            raise ValueError("policy evaluation requires a rule_ref")
+        if self.replay_cases < 0:
+            raise ValueError("replay_cases cannot be negative")
 
 
 @dataclass(frozen=True, slots=True)
@@ -189,6 +199,8 @@ class PolicyPromoter:
             raise ValueError("rule must complete shadow stage before activation")
         if evaluation.rule_ref != rule.id:
             raise ValueError("evaluation belongs to another policy rule")
+        if evaluation.replay_cases < 1:
+            raise ValueError("policy promotion requires at least one replay/shadow case")
         if not evaluation.passed or evaluation.regressions:
             raise ValueError("policy rule did not pass replay/shadow evaluation")
         active = PolicyRule(

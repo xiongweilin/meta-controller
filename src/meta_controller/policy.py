@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from typing import Any
 
 from portable_runtime.controller import (
@@ -13,21 +14,27 @@ from portable_runtime.controller import (
     latest_controller_decision,
 )
 
+from .candidates import Candidate
+from .engine import MetaControlFrame, MetaControllerEngine
+from .epistemic import EpistemicIssue, StructuralTension
 from .experience import ExperienceResolver
 from .models import EpistemicState, EpistemicStateEstimator
+from .planning import SearchBudget
+from .self_model import WorkingSelfModel
 
 
 class StagedMetaPolicy(ABC):
-    """Reusable selection topology above Agent Kernel's canonical controller loop.
+    """Compatibility facade over Agent Kernel's canonical controller loop.
 
-    Subclasses own domain-specific diagnosis, closure contents, Work proposal,
-    revision classification and effect policy. This class only selects the next
-    cognitive stage and supplies scoped experience hints.
+    Existing profile subclasses retain their stage hooks. New policy code can use
+    ``meta_control_frame`` to obtain the richer epistemic control frame without
+    changing Kernel semantics or minting Work/authority.
     """
 
     controller: CognitiveController
     estimator = EpistemicStateEstimator()
     experience_resolver = ExperienceResolver()
+    meta_engine = MetaControllerEngine()
 
     @property
     @abstractmethod
@@ -66,6 +73,39 @@ class StagedMetaPolicy(ABC):
 
     def epistemic_state(self, state: ControllerState) -> EpistemicState:
         return self.estimator.estimate(state)
+
+    def meta_control_frame(
+        self,
+        state: ControllerState,
+        *,
+        issues: tuple[EpistemicIssue, ...] = (),
+        tensions: tuple[StructuralTension, ...] = (),
+        candidates: Sequence[Candidate] = (),
+        self_model: WorkingSelfModel | None = None,
+        budget: SearchBudget | None = None,
+        used_redundancy_keys: frozenset[str] = frozenset(),
+        adopted_candidate_ref: str | None = None,
+        acceptance_criteria: Sequence[str] = (),
+        verification_plan: Sequence[str] = (),
+        reopen_conditions: Sequence[str] = (),
+        basis_refs: tuple[str, ...] = (),
+    ) -> MetaControlFrame:
+        """Evaluate richer meta-policy state while preserving existing stage compatibility."""
+
+        return self.meta_engine.evaluate(
+            self.epistemic_state(state),
+            issues=issues,
+            tensions=tensions,
+            candidates=candidates,
+            self_model=self_model,
+            budget=budget,
+            used_redundancy_keys=used_redundancy_keys,
+            adopted_candidate_ref=adopted_candidate_ref,
+            acceptance_criteria=acceptance_criteria,
+            verification_plan=verification_plan,
+            reopen_conditions=reopen_conditions,
+            basis_refs=basis_refs,
+        )
 
     def experience_hints(self, state: ControllerState, *extra_tags: str) -> str:
         epistemic = self.epistemic_state(state)

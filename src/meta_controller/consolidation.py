@@ -38,7 +38,7 @@ class ExperienceConsolidator:
                 ConsolidationStatus.REJECTED,
                 "durable experience requires an explicit summary and bounded scope",
             )
-        if not candidate.evidence_refs:
+        if not candidate.evidence_refs or any(not ref.strip() for ref in candidate.evidence_refs):
             return ConsolidationAssessment(
                 ConsolidationStatus.REJECTED,
                 "durable experience requires fresh reality evidence references",
@@ -53,6 +53,12 @@ class ExperienceConsolidator:
             return ConsolidationAssessment(
                 ConsolidationStatus.REJECTED,
                 "validation count cannot be less than one",
+            )
+        distinct_evidence_count = len(set(candidate.evidence_refs))
+        if candidate.repeated_validation_count > distinct_evidence_count:
+            return ConsolidationAssessment(
+                ConsolidationStatus.REJECTED,
+                "validation count cannot exceed distinct supporting evidence references",
             )
         if candidate.repeated_validation_count == 1:
             return ConsolidationAssessment(

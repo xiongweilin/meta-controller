@@ -1,0 +1,45 @@
+[project]
+name = "meta-controller"
+version = "0.1.0"
+description = "Replaceable epistemic/meta-control policy layer for Agent Kernel"
+requires-python = ">=3.12"
+readme = "README.md"
+license = { text = "MIT" }
+dependencies = [
+    "portable-runtime @ git+https://github.com/xiongweilin/agent-kernel.git@main",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3,<9",
+    "pytest-asyncio>=0.24,<1",
+    "ruff>=0.8,<1",
+    "mypy>=1.13,<2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["meta_controller"]
+
+[[tool.mypy.overrides]]
+module = ["portable_runtime.*"]
+ignore_missing_imports = true

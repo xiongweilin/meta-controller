@@ -133,7 +133,7 @@ class ActionPlanner:
             CandidateKind.VERIFICATION: EpistemicActionKind.VERIFY,
             CandidateKind.EXPERIMENT: EpistemicActionKind.TEST,
             CandidateKind.HYPOTHESIS: EpistemicActionKind.COMPARE,
-            CandidateKind.PROBLEM_REFRAME: EpistemicActionKind.GENERATE_CANDIDATES,
+            CandidateKind.PROBLEM_REFRAME: EpistemicActionKind.RE_REPRESENT,
         }
         return EpistemicAction(
             kind=kind_map[candidate.kind],
@@ -173,6 +173,7 @@ class SearchPolicy:
                 EpistemicActionKind.OBSERVE,
                 EpistemicActionKind.VERIFY,
                 EpistemicActionKind.TEST,
+                EpistemicActionKind.COMPARE,
             }:
                 rejected.append(action.id)
                 continue

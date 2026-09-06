@@ -117,11 +117,11 @@ class CandidateQualifier:
                 CandidateQualificationStatus.REJECTED,
                 "candidate does not create a decision-relevant distinction",
             )
-        if candidate.scope != assessment.controller_ref and not candidate.scope.strip():
+        if candidate.scope != assessment.controller_ref:
             return CandidateQualification(
                 candidate.id,
                 CandidateQualificationStatus.REJECTED,
-                "candidate scope is unusable",
+                "candidate scope does not match the current controller",
             )
         return CandidateQualification(
             candidate.id,

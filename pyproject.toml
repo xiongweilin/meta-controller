@@ -6,7 +6,7 @@ requires-python = ">=3.12"
 readme = "README.md"
 license = { text = "MIT" }
 dependencies = [
-    "portable-runtime @ git+https://github.com/xiongweilin/agent-kernel.git@main",
+    "portable-runtime @ git+https://github.com/xiongweilin/agent-kernel.git@599845269bb682732820e6c343db96d558bd5102",
 ]
 
 [project.optional-dependencies]

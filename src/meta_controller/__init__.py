@@ -13,9 +13,9 @@ from meta_controller.models import EpistemicMode, EpistemicState, EpistemicState
 from meta_controller.policy import StagedMetaPolicy
 
 __all__ = [
+    "DEFAULT_EXPERIENCE_RULES",
     "ConsolidationAssessment",
     "ConsolidationStatus",
-    "DEFAULT_EXPERIENCE_RULES",
     "EpistemicMode",
     "EpistemicState",
     "EpistemicStateEstimator",

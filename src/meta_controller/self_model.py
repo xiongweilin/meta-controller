@@ -87,9 +87,10 @@ class SelfModelCalibrator:
                 known_failure_modes=failure_modes,
                 basis_refs=tuple(dict.fromkeys((*current.basis_refs, evidence_ref))),
             )
-        capabilities = tuple(
-            item for item in model.capabilities if item.capability_ref != capability_ref
-        ) + (updated,)
+        capabilities = (
+            *(item for item in model.capabilities if item.capability_ref != capability_ref),
+            updated,
+        )
         return replace(
             model,
             id=_new_id("self_model"),

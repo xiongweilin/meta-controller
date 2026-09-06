@@ -14,6 +14,17 @@ def _new_id(prefix: str) -> str:
     return f"{prefix}_{uuid4().hex}"
 
 
+_EFFECT_CLASS_RANK = {
+    "read-only": 0,
+    "internal-reversible": 1,
+    "external-effect": 2,
+}
+
+
+def _stricter_effect_class(left: str, right: str) -> str:
+    return max((left, right), key=_EFFECT_CLASS_RANK.__getitem__)
+
+
 class EpistemicActionKind(StrEnum):
     OBSERVE = "observe"
     RETRIEVE = "retrieve"
@@ -109,8 +120,13 @@ class ActionPlanner:
         self_model: WorkingSelfModel | None,
     ) -> EpistemicAction:
         capability = candidate.required_capabilities[0] if candidate.required_capabilities else None
-        if capability and self_model is not None and not self_model.can_attempt(capability):
-            capability = None
+        effect_class = candidate.effect_class
+        if capability and self_model is not None:
+            belief = self_model.capability(capability)
+            if belief is None or not self_model.can_attempt(capability):
+                capability = None
+            else:
+                effect_class = _stricter_effect_class(effect_class, belief.effect_class)
         kind_map = {
             CandidateKind.ACQUISITION: EpistemicActionKind.OBSERVE,
             CandidateKind.REPRESENTATION: EpistemicActionKind.RE_REPRESENT,
@@ -128,7 +144,7 @@ class ActionPlanner:
             decision_relevance=candidate.decision_relevance,
             estimated_cost=candidate.estimated_cost,
             estimated_latency=candidate.estimated_latency,
-            effect_class=candidate.effect_class,
+            effect_class=effect_class,
             basis_refs=candidate.basis_refs,
             redundancy_key=candidate.redundancy_key,
         )

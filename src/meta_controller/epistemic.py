@@ -61,7 +61,9 @@ class UncertaintyProfile:
 
     @classmethod
     def from_issues(cls, issues: tuple[EpistemicIssue, ...]) -> UncertaintyProfile:
-        unresolved = tuple(issue for issue in issues if issue.status is not EpistemicIssueStatus.RESOLVED)
+        unresolved = tuple(
+            issue for issue in issues if issue.status is not EpistemicIssueStatus.RESOLVED
+        )
         counts = Counter(issue.kind for issue in unresolved)
         return cls(
             unresolved_count=len(unresolved),
@@ -147,7 +149,9 @@ class EpistemicAssessor:
         basis_refs: tuple[str, ...] = (),
     ) -> EpistemicAssessment:
         synthesized = list(issues)
-        state_basis = basis_refs or (f"controller:{projection.controller_ref}:v{projection.state_version}",)
+        state_basis = basis_refs or (
+            f"controller:{projection.controller_ref}:v{projection.state_version}",
+        )
         if not synthesized and projection.open_issue_count:
             kind = (
                 EpistemicIssueKind.CANDIDATE_SPACE_SUSPECTED_INCOMPLETE

@@ -12,7 +12,11 @@ from .engine import MetaControlIntent, MetaControlIntentKind
 
 
 class MetaControlCompilerHooks(Protocol):
-    def form_closure(self, intent: MetaControlIntent, state: ControllerState) -> ControllerDecision: ...
+    def form_closure(
+        self,
+        intent: MetaControlIntent,
+        state: ControllerState,
+    ) -> ControllerDecision: ...
 
     def effectful_experiment(
         self,

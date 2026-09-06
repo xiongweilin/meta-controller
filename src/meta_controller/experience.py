@@ -80,7 +80,7 @@ DEFAULT_EXPERIENCE_RULES: tuple[ExperienceRule, ...] = (
             "Require repeated independent validation before promoting a lesson to a general "
             "policy rule.",
         ),
-        source_classes=("ratio"),
+        source_classes=("ratio",),
     ),
     ExperienceRule(
         id="representation-equivalence-v1",

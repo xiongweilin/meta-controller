@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from portable_runtime.controller import ControllerState, ControllerStatus
+
 from meta_controller import (
     ConsolidationStatus,
     EpistemicMode,
@@ -8,7 +10,6 @@ from meta_controller import (
     ExperienceConsolidator,
     ExperienceResolver,
 )
-from portable_runtime.controller import ControllerState, ControllerStatus
 
 
 def test_state_estimator_projects_kernel_state_without_new_authority() -> None:

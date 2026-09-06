@@ -46,7 +46,8 @@ class ExperienceConsolidator:
         if not candidate.policy_effects:
             return ConsolidationAssessment(
                 ConsolidationStatus.REJECTED,
-                "retain only experience that changes future distinction, action, verification or stopping",
+                "retain only experience that changes future distinction, action, verification "
+                "or stopping",
             )
         if candidate.repeated_validation_count < 1:
             return ConsolidationAssessment(
@@ -60,5 +61,6 @@ class ExperienceConsolidator:
             )
         return ConsolidationAssessment(
             ConsolidationStatus.CANDIDATE,
-            "repeated validation supports a policy-rule candidate; promotion remains a separate decision",
+            "repeated validation supports a policy-rule candidate; promotion remains a "
+            "separate decision",
         )

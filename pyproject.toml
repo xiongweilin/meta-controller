@@ -1,6 +1,6 @@
 [project]
 name = "meta-controller"
-version = "0.1.0"
+version = "0.2.0"
 description = "Replaceable epistemic/meta-control policy layer for Agent Kernel"
 requires-python = ">=3.12"
 readme = "README.md"

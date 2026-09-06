@@ -9,6 +9,8 @@ from portable_runtime.controller import (
     ControllerDecisionKind,
     ControllerState,
     ControllerStatus,
+    controller_capability_result,
+    latest_controller_decision,
 )
 
 from .experience import ExperienceResolver
@@ -98,7 +100,7 @@ class StagedMetaPolicy(ABC):
         if state.active_closure_ref:
             return self._propose_work(state)
 
-        last = self.controller.latest_decision(state.id)
+        last = latest_controller_decision(self.controller, state.id)
         if last is None or last.kind is ControllerDecisionKind.REOPEN:
             return self._diagnosis(state)
 
@@ -106,7 +108,7 @@ class StagedMetaPolicy(ABC):
             last.kind is ControllerDecisionKind.INVOKE_CAPABILITY
             and last.parameters.get("phase") == "diagnosis"
         ):
-            result = self.controller.capability_result(state.id, last.id)
+            result = controller_capability_result(self.controller, state.id, last.id)
             if result is None:
                 result = {
                     "status": "failed",

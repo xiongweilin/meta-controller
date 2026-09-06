@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 
 @dataclass(frozen=True, slots=True)
@@ -19,7 +19,8 @@ DEFAULT_EXPERIENCE_RULES: tuple[ExperienceRule, ...] = (
         summary="Historical validity does not establish current-use validity.",
         required_tags=frozenset({"historical-use"}),
         directives=(
-            "Re-ground the experience in current scope, environment and evidence before relying on it.",
+            "Re-ground the experience in current scope, environment and evidence "
+            "before relying on it.",
             "Treat historical success as provenance or a prior, not as a current decision.",
         ),
         source_classes=("ratio", "agent-kernel-experience-use"),
@@ -30,7 +31,8 @@ DEFAULT_EXPERIENCE_RULES: tuple[ExperienceRule, ...] = (
         required_tags=frozenset({"retry"}),
         directives=(
             "Carry forward the prior attempt evidence explicitly.",
-            "Prefer a new observation, test or representation change over an equivalent blind retry.",
+            "Prefer a new observation, test or representation change over an equivalent "
+            "blind retry.",
         ),
         source_classes=("control-plane", "ratio"),
     ),
@@ -39,7 +41,8 @@ DEFAULT_EXPERIENCE_RULES: tuple[ExperienceRule, ...] = (
         summary="A proxy/source/provider state does not directly establish the target state.",
         required_tags=frozenset({"proxy-observation"}),
         directives=(
-            "State exactly what the observation proves and what target proposition remains unverified.",
+            "State exactly what the observation proves and what target proposition remains "
+            "unverified.",
             "Use an independent target observation when the action depends on target truth.",
         ),
         source_classes=("control-plane", "ratio"),
@@ -49,7 +52,8 @@ DEFAULT_EXPERIENCE_RULES: tuple[ExperienceRule, ...] = (
         summary="UNKNOWN can justify acquisition but cannot authorize an effect.",
         required_tags=frozenset({"unknown"}),
         directives=(
-            "Prefer read-class evidence acquisition while the relevant distinction remains unresolved.",
+            "Prefer read-class evidence acquisition while the relevant distinction remains "
+            "unresolved.",
             "Do not widen effect scope merely because the current classifier cannot decide.",
         ),
         source_classes=("control-plane", "ratio"),
@@ -60,23 +64,30 @@ DEFAULT_EXPERIENCE_RULES: tuple[ExperienceRule, ...] = (
         required_tags=frozenset({"failure-localization"}),
         directives=(
             "Choose the smallest action that can discriminate among live failure hypotheses.",
-            "Increase scope only when narrower observations cannot resolve the decision-relevant ambiguity.",
+            "Increase scope only when narrower observations cannot resolve the "
+            "decision-relevant ambiguity.",
         ),
         source_classes=("ratio-runbook", "control-plane"),
     ),
     ExperienceRule(
         id="scoped-generalization-v1",
-        summary="One verified success yields scoped conditional experience, not a universal procedure.",
+        summary=(
+            "One verified success yields scoped conditional experience, not a universal procedure."
+        ),
         required_tags=frozenset({"experience-consolidation"}),
         directives=(
             "Retain scope, conditions, evidence boundary and reopen triggers with the lesson.",
-            "Require repeated independent validation before promoting a lesson to a general policy rule.",
+            "Require repeated independent validation before promoting a lesson to a general "
+            "policy rule.",
         ),
         source_classes=("ratio"),
     ),
     ExperienceRule(
         id="representation-equivalence-v1",
-        summary="Surface difference may be representational noise rather than task-relevant semantic difference.",
+        summary=(
+            "Surface difference may be representational noise rather than task-relevant "
+            "semantic difference."
+        ),
         required_tags=frozenset({"representation-mismatch"}),
         directives=(
             "Test an explicit equivalence relation before creating a new semantic failure class.",

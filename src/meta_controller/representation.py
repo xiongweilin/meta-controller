@@ -96,7 +96,9 @@ class RepresentationReviser:
             updated,
             id=_new_id("representation"),
             version=state.version + 1,
-            basis_refs=tuple(dict.fromkeys((*state.basis_refs, *candidate.basis_refs, candidate.id))),
+            basis_refs=tuple(
+                dict.fromkeys((*state.basis_refs, *candidate.basis_refs, candidate.id))
+            ),
         )
         return RepresentationRevisionResult(
             prior_ref=state.id,
@@ -113,7 +115,10 @@ class RepresentationReviser:
         params: dict[str, str],
     ) -> RepresentationState:
         if mutation is RepresentationMutationKind.ADD_FACTOR:
-            return replace(state, factors=self._add(state.factors, self._required(params, "factor")))
+            return replace(
+                state,
+                factors=self._add(state.factors, self._required(params, "factor")),
+            )
         if mutation is RepresentationMutationKind.REMOVE_FACTOR:
             return replace(
                 state,
@@ -136,7 +141,10 @@ class RepresentationReviser:
         if mutation is RepresentationMutationKind.CHANGE_SCALE:
             return replace(state, scales=(self._required(params, "scale"),))
         if mutation is RepresentationMutationKind.ADD_RELATION:
-            return replace(state, relations=self._add(state.relations, self._required(params, "relation")))
+            return replace(
+                state,
+                relations=self._add(state.relations, self._required(params, "relation")),
+            )
         if mutation is RepresentationMutationKind.REMOVE_RELATION:
             return replace(
                 state,

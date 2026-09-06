@@ -148,6 +148,8 @@ class EpistemicAssessor:
         self_model_ref: str | None = None,
         basis_refs: tuple[str, ...] = (),
     ) -> EpistemicAssessment:
+        if any(issue.scope != projection.controller_ref for issue in issues):
+            raise ValueError("epistemic issue scope does not match the current controller")
         synthesized = list(issues)
         state_basis = basis_refs or (
             f"controller:{projection.controller_ref}:v{projection.state_version}",

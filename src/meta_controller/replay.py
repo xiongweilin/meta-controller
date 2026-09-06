@@ -20,7 +20,9 @@ class ReplayEvaluator:
 
     def metrics(self, events: tuple[MetaPolicyEvent, ...]) -> ReplayMetrics:
         controllers = {event.controller_ref for event in events}
-        intents = tuple(event for event in events if event.event_type == "MetaControlIntentSelected")
+        intents = tuple(
+            event for event in events if event.event_type == "MetaControlIntentSelected"
+        )
         blind_retries = sum(
             1
             for event in intents

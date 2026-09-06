@@ -147,34 +147,29 @@ class MetaControllerEngine:
         selection: SearchSelection,
         adopted_candidate_ref: str | None,
     ) -> MetaControlIntent:
-        base = {
-            "controller_ref": projection.controller_ref,
-            "kernel_state_version": projection.state_version,
-            "policy_version": self.policy_version,
-        }
         if projection.mode is EpistemicMode.CLOSED:
-            return MetaControlIntent(
-                **base,
+            return self._make_intent(
+                projection,
                 kind=MetaControlIntentKind.CLOSE,
                 reason="kernel controller is already closed; meta-policy mints no new episode",
             )
         if projection.mode is EpistemicMode.REOPEN_REQUIRED:
-            return MetaControlIntent(
-                **base,
+            return self._make_intent(
+                projection,
                 kind=MetaControlIntentKind.REOPEN,
                 reason="kernel revision state requires an explicit reopen",
             )
         if readiness.kind is ClosureReadinessKind.READY:
-            return MetaControlIntent(
-                **base,
+            return self._make_intent(
+                projection,
                 kind=MetaControlIntentKind.FORM_CLOSURE,
                 reason="closure readiness gate is satisfied",
                 candidate_ref=adopted_candidate_ref,
             )
         action = selection.action
         if action is None:
-            return MetaControlIntent(
-                **base,
+            return self._make_intent(
+                projection,
                 kind=MetaControlIntentKind.WAIT,
                 reason=selection.reason,
             )
@@ -184,12 +179,31 @@ class MetaControllerEngine:
             kind = MetaControlIntentKind.ACQUIRE_EVIDENCE
         else:
             kind = MetaControlIntentKind.EFFECTFUL_EXPERIMENT
-        return MetaControlIntent(
-            **base,
+        return self._make_intent(
+            projection,
             kind=kind,
             reason=selection.reason,
             action=action,
             candidate_ref=action.candidate_ref,
+        )
+
+    def _make_intent(
+        self,
+        projection: EpistemicState,
+        *,
+        kind: MetaControlIntentKind,
+        reason: str,
+        action: EpistemicAction | None = None,
+        candidate_ref: str | None = None,
+    ) -> MetaControlIntent:
+        return MetaControlIntent(
+            controller_ref=projection.controller_ref,
+            kernel_state_version=projection.state_version,
+            policy_version=self.policy_version,
+            kind=kind,
+            reason=reason,
+            action=action,
+            candidate_ref=candidate_ref,
         )
 
     def _record(self, frame: MetaControlFrame) -> None:

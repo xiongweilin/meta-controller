@@ -99,7 +99,9 @@ class ActionPlanner:
         frontier: CandidateFrontier,
         self_model: WorkingSelfModel | None,
     ) -> tuple[EpistemicAction, ...]:
-        return tuple(self._from_candidate(candidate, self_model) for candidate in frontier.candidates)
+        return tuple(
+            self._from_candidate(candidate, self_model) for candidate in frontier.candidates
+        )
 
     def _from_candidate(
         self,

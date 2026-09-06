@@ -206,5 +206,7 @@ class PolicyPromoter:
             version=current.version + 1,
             parent_ref=current.id,
             rules=(*retained, active),
-            basis_refs=tuple(dict.fromkeys((*current.basis_refs, *evaluation.evidence_refs, rule.id))),
+            basis_refs=tuple(
+                dict.fromkeys((*current.basis_refs, *evaluation.evidence_refs, rule.id))
+            ),
         )

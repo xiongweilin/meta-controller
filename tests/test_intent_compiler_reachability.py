@@ -23,7 +23,7 @@ def _projection() -> EpistemicState:
     )
 
 
-def test_hypothesis_without_concrete_capability_waits_instead_of_emitting_uncompilable_read_intent() -> None:
+def test_hypothesis_without_capability_waits() -> None:
     candidate = Candidate(
         kind=CandidateKind.HYPOTHESIS,
         statement="compare two root-cause hypotheses",

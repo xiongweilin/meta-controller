@@ -136,7 +136,10 @@ class CandidateFrontier:
     rejected: tuple[CandidateQualification, ...] = ()
 
     def get(self, candidate_ref: str) -> Candidate | None:
-        return next((candidate for candidate in self.candidates if candidate.id == candidate_ref), None)
+        return next(
+            (candidate for candidate in self.candidates if candidate.id == candidate_ref),
+            None,
+        )
 
 
 class FrontierBuilder:
@@ -159,7 +162,11 @@ class FrontierBuilder:
 
         survivors: list[Candidate] = []
         for candidate in qualified:
-            if any(self._dominates(other, candidate) for other in qualified if other.id != candidate.id):
+            if any(
+                self._dominates(other, candidate)
+                for other in qualified
+                if other.id != candidate.id
+            ):
                 rejected.append(
                     CandidateQualification(
                         candidate.id,
@@ -192,7 +199,11 @@ class FrontierBuilder:
     def _same_candidate(self, left: Candidate, right: Candidate) -> bool:
         if left.redundancy_key and right.redundancy_key:
             return left.redundancy_key == right.redundancy_key
-        return left.kind is right.kind and left.scope == right.scope and left.statement == right.statement
+        return (
+            left.kind is right.kind
+            and left.scope == right.scope
+            and left.statement == right.statement
+        )
 
     def _dominates(self, left: Candidate, right: Candidate) -> bool:
         if left.kind is not right.kind or left.scope != right.scope:
@@ -226,7 +237,9 @@ class ResidualDrivenGenerator:
                 generated.append(
                     Candidate(
                         kind=CandidateKind.REPRESENTATION,
-                        statement="Revise the current representation before repeating the same pass.",
+                        statement=(
+                            "Revise the current representation before repeating the same pass."
+                        ),
                         scope=assessment.controller_ref,
                         basis_refs=(tension.id, *tension.basis_refs),
                         expected_observable_difference=(
@@ -246,11 +259,14 @@ class ResidualDrivenGenerator:
                 generated.append(
                     Candidate(
                         kind=CandidateKind.PROBLEM_REFRAME,
-                        statement="Re-open the problem framing around the unresolved reality residual.",
+                        statement=(
+                            "Re-open the problem framing around the unresolved reality residual."
+                        ),
                         scope=assessment.controller_ref,
                         basis_refs=(tension.id, *tension.basis_refs),
                         expected_observable_difference=(
-                            "The reframed problem should expose a distinction not represented by the "
+                            "The reframed problem should expose a distinction not represented "
+                            "by the "
                             "current closure."
                         ),
                         expected_discrimination=min(1.0, 0.35 + 0.1 * tension.persistence),

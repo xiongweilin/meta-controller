@@ -66,11 +66,6 @@ class StagedMetaPolicy(ABC):
         value = getattr(self, "human_instruction", None)
         return isinstance(value, str) and bool(value.strip())
 
-    def _accept_failed_diagnosis_as_unknown(self) -> bool:
-        """Whether a failed/missing diagnosis may still close as UNKNOWN/read-only."""
-
-        return False
-
     def epistemic_state(self, state: ControllerState) -> EpistemicState:
         return self.estimator.estimate(state)
 
@@ -155,7 +150,7 @@ class StagedMetaPolicy(ABC):
                     "message": "diagnosis returned no durable result",
                 }
             succeeded = str(result.get("status", "")) == "succeeded"
-            if not succeeded and not self._accept_failed_diagnosis_as_unknown():
+            if not succeeded:
                 return ControllerDecision(
                     controller_ref=state.id,
                     state_version=state.version,

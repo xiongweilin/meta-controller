@@ -133,6 +133,20 @@ Effectful epistemic experiments are never compiled as direct read-class cognitio
 
 The design and ownership baseline is in [`docs/architecture-v1.md`](docs/architecture-v1.md).
 
+## Boundary gate
+
+The package is deliberately non-authority-bearing. Its production surface may
+project canonical Agent Kernel controller state and compile policy intents, but
+it does not import `control_plane.*`, `portable_runtime.providers.*` or
+`portable_runtime.deployment.*`; register providers; call
+`runtime.run_capability`; or implement deployment, notification or effect
+execution. Those concerns remain with the Kernel and explicit profile/runtime
+boundaries.
+
+A failed or missing diagnosis defaults to `WAIT` and does not enter the
+`CognitiveClosure` path. The contract is enforced by the boundary gate and a
+regression test in `tests/`.
+
 ## Compatibility
 
 `StagedMetaPolicy` remains the compatibility facade used by existing deployments. Existing `_diagnosis`, `_form_closure`, `_propose_work`, `_revision` and reopen hooks retain their behavior. A profile can incrementally adopt the richer control plane through:

@@ -1,6 +1,30 @@
 # meta-controller
 
+[![CI](https://github.com/xiongweilin/meta-controller/actions/workflows/ci.yml/badge.svg)](https://github.com/xiongweilin/meta-controller/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](pyproject.toml)
+
 A replaceable search, uncertainty, and cognitive-selection policy layer for [agent-kernel](https://github.com/xiongweilin/agent-kernel).
+
+## Concrete decision problem
+
+Suppose an incident has two plausible causes and one available read-only observation can distinguish them.
+
+A generic agent loop can easily spend another turn repeating an equivalent query, broaden search without adding discriminating evidence, or jump into an effectful experiment before uncertainty is bounded. Meta Controller exists to choose the next information-bearing cognitive action and to decide when further exploration is no longer earning its cost.
+
+A typical path is:
+
+```text
+2 plausible hypotheses
+  -> score unresolved distinctions
+  -> choose one discriminating read-only observation
+  -> reject redundant search that adds no new evidence
+  -> reassess uncertainty
+  -> continue, revise the representation, or form temporary closure
+  -> hand only a non-authority intent to Agent Kernel
+```
+
+If the useful next experiment is effectful, Meta Controller cannot silently treat it as a read. The experiment must go through Agent Kernel closure, Work, authorization, execution, and verification.
+
+## What this layer controls
 
 `agent-kernel` defines which state transitions are valid and owns Work, authorization, execution, verification, recovery, and durable responsibility. `meta-controller` decides what is worth investigating next inside those constraints.
 
@@ -238,3 +262,7 @@ uv run ruff check .
 uv run mypy src --no-incremental --show-error-codes
 uv run pytest -q
 ```
+
+## Contributing and security
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the architectural contribution boundary and [`SECURITY.md`](SECURITY.md) for private vulnerability reporting guidance.

@@ -1,10 +1,54 @@
 # meta-controller
 
-Replaceable epistemic/meta-control policy layer for [agent-kernel](https://github.com/xiongweilin/agent-kernel).
+A replaceable epistemic policy layer for [agent-kernel](https://github.com/xiongweilin/agent-kernel).
 
-`meta-controller` owns evolving cognitive-selection policy. `agent-kernel` remains the stable semantic/runtime kernel and continues to own controller-state admissibility, cognitive closure, Work/Run, responsibility, authorization, verification, revision, recovery and provenance.
+`agent-kernel` defines which state transitions are valid and owns Work, authorization, execution, verification, recovery, and durable responsibility. `meta-controller` decides what is worth investigating next inside those constraints.
 
-## v0.2 boundary
+In short:
+
+```text
+agent-kernel:
+"Is this transition valid, authorized, durable, and recoverable?"
+
+meta-controller:
+"Given what we currently know, what should we inspect, compare, revise, or stop exploring next?"
+```
+
+`meta-controller` is deliberately non-authority-bearing. Its output can influence cognitive selection, but it cannot create Work, authorize effects, declare an external outcome verified, or bypass Agent Kernel state transitions.
+
+## Why this is separate from the kernel
+
+A stable runtime kernel should not have to encode one universal search strategy, uncertainty policy, candidate-generation method, or stopping rule.
+
+Those policies may evolve rapidly. Different deployments may also want different answers to questions such as:
+
+- Which unresolved issue has the highest information value?
+- When is another observation worth its cost?
+- When does repeated search stop adding discriminating evidence?
+- Is the current representation of the problem itself blocking progress?
+- When is a temporary cognitive closure justified?
+- After a failed execution, should cognition reopen locally or at a deeper level?
+
+Agent Kernel owns the invariants around what happens next. Meta Controller owns replaceable policy for choosing among admissible cognitive directions.
+
+## Example
+
+Suppose the agent has two plausible explanations for an incident and one available read-only check can distinguish them.
+
+Meta Controller may conclude:
+
+```text
+current evidence is insufficient
+-> inspect signal X before spending Work on Y
+-> reject an equivalent repeated query that adds no new distinction
+-> form closure only after the remaining uncertainty is bounded
+```
+
+It emits a `MetaControlIntent`. Agent Kernel still decides whether that intent can become a controller decision, closure, Work proposal, or runtime action.
+
+An effectful experiment is never downgraded into a read-only epistemic action just because it would be useful for learning. It must go through the normal Kernel closure, Work, authorization, execution, and verification path.
+
+## v0.2 architecture
 
 ```text
 ratio / operational experience
@@ -32,7 +76,7 @@ Agent Kernel ControllerPolicy / explicit profile compiler hooks
 Work / Run / Reality / Revision
 ```
 
-Canonical separations:
+## Canonical separations
 
 ```text
 ReasonerOutput != QualifiedCandidate
@@ -116,8 +160,6 @@ capability      frontier      -> WorkProposal
 
 A reopen is not a blind repeat. Search policy rejects an equivalent action when its redundancy key has already been consumed and no new discriminating difference is represented.
 
-Effectful epistemic experiments are never compiled as direct read-class cognition. They must go through the normal Kernel closure/Work/authorization path.
-
 ## Core modules
 
 - `epistemic.py` — typed epistemic issues, uncertainty profile, structural tension and assessment.
@@ -135,21 +177,13 @@ The design and ownership baseline is in [`docs/architecture-v1.md`](docs/archite
 
 ## Boundary gate
 
-The package is deliberately non-authority-bearing. Its production surface may
-project canonical Agent Kernel controller state and compile policy intents, but
-it does not import `control_plane.*`, `portable_runtime.providers.*` or
-`portable_runtime.deployment.*`; register providers; call
-`runtime.run_capability`; or implement deployment, notification or effect
-execution. Those concerns remain with the Kernel and explicit profile/runtime
-boundaries.
+The package does not import `control_plane.*`, `portable_runtime.providers.*`, or `portable_runtime.deployment.*`; register providers; call `runtime.run_capability`; or implement deployment, notification, or effect execution. Those concerns remain with Agent Kernel and explicit profile/runtime boundaries.
 
-A failed or missing diagnosis defaults to `WAIT` and does not enter the
-`CognitiveClosure` path. The contract is enforced by the boundary gate and a
-regression test in `tests/`.
+A failed or missing diagnosis defaults to `WAIT` and does not enter the `CognitiveClosure` path. The boundary is enforced by regression tests.
 
 ## Compatibility
 
-`StagedMetaPolicy` remains the compatibility facade used by existing deployments. Existing `_diagnosis`, `_form_closure`, `_propose_work`, `_revision` and reopen hooks retain their behavior. A profile can incrementally adopt the richer control plane through:
+`StagedMetaPolicy` remains the compatibility facade used by existing deployments. Existing `_diagnosis`, `_form_closure`, `_propose_work`, `_revision`, and reopen hooks retain their behavior. A profile can incrementally adopt the richer policy surface through:
 
 ```python
 frame = policy.meta_control_frame(
@@ -166,7 +200,7 @@ This evaluates policy state only. It does not create Work or execution authority
 
 ## Experience discipline
 
-Experience is retained only when it can change a future distinction, action choice, verification choice or stopping condition. One successful episode remains scoped and conditional. Historical experience can influence candidate generation and priors, but current use must be re-grounded in current scope/environment/evidence.
+Experience is retained only when it can change a future distinction, action choice, verification choice, or stopping condition. One successful episode remains scoped and conditional. Historical experience can influence candidate generation and priors, but current use must be re-grounded in current scope, environment, and evidence.
 
 Promotion lifecycle:
 

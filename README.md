@@ -1,6 +1,6 @@
 # meta-controller
 
-A replaceable epistemic policy layer for [agent-kernel](https://github.com/xiongweilin/agent-kernel).
+A replaceable search, uncertainty, and cognitive-selection policy layer for [agent-kernel](https://github.com/xiongweilin/agent-kernel).
 
 `agent-kernel` defines which state transitions are valid and owns Work, authorization, execution, verification, recovery, and durable responsibility. `meta-controller` decides what is worth investigating next inside those constraints.
 

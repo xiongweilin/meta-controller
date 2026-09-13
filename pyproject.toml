@@ -4,7 +4,7 @@ version = "0.2.0"
 description = "Replaceable epistemic/meta-control policy layer for Agent Kernel"
 requires-python = ">=3.12"
 readme = "README.md"
-license = { text = "MIT" }
+license = { file = "LICENSE" }
 dependencies = [
     "portable-runtime @ git+https://github.com/xiongweilin/agent-kernel.git@dd59bc19c440ba550443e5578d9081011fd5d7c3",
 ]
